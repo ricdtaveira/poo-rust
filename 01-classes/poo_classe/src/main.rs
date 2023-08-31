@@ -72,7 +72,7 @@ impl AlunoDao {
                 matricula TEXT NOT NULL,
                 data_nascimento TEXT NOT NULL
             )",
-            [],
+            (),
         )?;
         Ok(AlunoDao { connection })
     }
@@ -81,7 +81,12 @@ impl AlunoDao {
         self.connection.execute(
             "INSERT INTO alunos (id, nome, matricula, data_nascimento)
             VALUES (?1, ?2, ?3, ?4)",
-            params![aluno.id, aluno.nome, aluno.matricula, aluno.data_nascimento],
+            (
+                &aluno.id,
+                &aluno.nome,
+                &aluno.matricula,
+                &aluno.data_nascimento,
+            ),
         )?;
         Ok(())
     }
@@ -89,14 +94,19 @@ impl AlunoDao {
     fn update(&mut self, aluno: &Aluno) -> Result<()> {
         self.connection.execute(
             "UPDATE alunos SET nome = ?2, matricula = ?3, data_nascimento = ?4 WHERE id = ?1",
-            params![aluno.id, aluno.nome, aluno.matricula, aluno.data_nascimento],
+            (
+                &aluno.id,
+                &aluno.nome,
+                &aluno.matricula,
+                &aluno.data_nascimento,
+            ),
         )?;
         Ok(())
     }
 
     fn delete(&mut self, id: i32) -> Result<()> {
         self.connection
-            .execute("DELETE FROM alunos WHERE id = ?1", params![id])?;
+            .execute("DELETE FROM alunos WHERE id = ?1", [id])?;
         Ok(())
     }
 }
