@@ -6,6 +6,7 @@ use rusqlite::{Connection, Result};
 use std::error::Error;
 
 // Definição da classe Aluno
+#[derive(Clone)]
 struct Aluno {
     id: i32,
     nome: String,
@@ -56,6 +57,7 @@ impl Aluno {
 }
 
 // Camada de Persistência
+#[derive()]
 struct AlunoDao {
     connection: Connection,
 }
@@ -93,7 +95,8 @@ impl AlunoDao {
     }
 
     fn delete(&mut self, id: i32) -> Result<()> {
-        self.connection.execute("DELETE FROM alunos WHERE id = ?1", params![id])?;
+        self.connection
+            .execute("DELETE FROM alunos WHERE id = ?1", params![id])?;
         Ok(())
     }
 }
@@ -102,7 +105,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut aluno_dao = AlunoDao::new()?;
 
     // Criando um aluno
-    let aluno = Aluno::new(1, "João".to_string(), "12345".to_string(), "2000-01-01".to_string());
+    let aluno = Aluno::new(
+        1,
+        "João".to_string(),
+        "12345".to_string(),
+        "2000-01-01".to_string(),
+    );
 
     // Inserindo o aluno no banco de dados
     aluno_dao.insert(&aluno)?;
