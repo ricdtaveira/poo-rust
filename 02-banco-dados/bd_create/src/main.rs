@@ -1,5 +1,7 @@
-// https://github.com/rusqlite/rusqlite/tree/master
-// Exemplo de uso do Banco de Dados Sqlite3
+// Uso da biblioteca rusqlite
+// Aessar em https://github.com/rusqlite/rusqlite/tree/master
+// Exemplo de uso de Classe persistida em um Banco de Dados
+//  Sqlite3
 //
 
 use rusqlite::{Connection, Result};
@@ -33,6 +35,7 @@ fn main() -> Result<()> {
     )?;
 
     let mut stmt = conn.prepare("SELECT id, name, data FROM person")?;
+
     let person_iter = stmt.query_map([], |row| {
         Ok(Person {
             id: row.get(0)?,
