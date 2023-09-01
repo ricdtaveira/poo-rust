@@ -1,7 +1,8 @@
-//
-// Exemplo de uma Classe com
-// métodos Contributors, Assessores e Modificadores
-//
+// poo_classe
+// Exemplo de uso da POO no Rust com uma struct e sua impl
+// Uma Classe Aluno com os métodos Contrutores, Assessores e Modificadores
+// Uma Classe de Persistencia (Dao) com métodos CRUD
+
 use rusqlite::{Connection, Result};
 use std::error::Error;
 
@@ -24,7 +25,6 @@ impl Aluno {
             data_nascimento,
         }
     }
-
     // Assessores
     fn get_id(&self) -> i32 {
         self.id
@@ -66,7 +66,7 @@ impl AlunoDao {
     fn new() -> Result<Self> {
         let connection = Connection::open("alunos.db")?;
         connection.execute(
-            "CREATE TABLE IF NOT EXISTS alunos (
+            "CREATE TABLE IF NOT EXISTS tb_alunos (
                 id INTEGER PRIMARY KEY,
                 nome TEXT NOT NULL,
                 matricula TEXT NOT NULL,
@@ -77,9 +77,15 @@ impl AlunoDao {
         Ok(AlunoDao { connection })
     }
 
+    fn select(&mut self, id: i32) -> Result<()> {
+        self.connection
+            .execute("SELECT * FROM tb_alunos WHERE id = ?1", [id])?;
+        Ok(())
+    }
+
     fn insert(&mut self, aluno: &Aluno) -> Result<()> {
         self.connection.execute(
-            "INSERT INTO alunos (id, nome, matricula, data_nascimento)
+            "INSERT INTO tb_alunos (id, nome, matricula, data_nascimento)
             VALUES (?1, ?2, ?3, ?4)",
             (
                 &aluno.id,
@@ -93,7 +99,7 @@ impl AlunoDao {
 
     fn update(&mut self, aluno: &Aluno) -> Result<()> {
         self.connection.execute(
-            "UPDATE alunos SET nome = ?2, matricula = ?3, data_nascimento = ?4 WHERE id = ?1",
+            "UPDATE tb_alunos SET nome = ?2, matricula = ?3, data_nascimento = ?4 WHERE id = ?1",
             (
                 &aluno.id,
                 &aluno.nome,
@@ -106,12 +112,13 @@ impl AlunoDao {
 
     fn delete(&mut self, id: i32) -> Result<()> {
         self.connection
-            .execute("DELETE FROM alunos WHERE id = ?1", [id])?;
+            .execute("DELETE FROM tb_alunos WHERE id = ?1", [id])?;
         Ok(())
     }
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    // Criação de um objeto para persistir uma instancia de Aluno
     let mut aluno_dao = AlunoDao::new()?;
 
     // Criando um aluno
