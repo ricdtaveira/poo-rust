@@ -1,4 +1,6 @@
 // https://github.com/rusqlite/rusqlite/tree/master
+// Exemplo de uso do Banco de Dados Sqlite3
+//
 
 use rusqlite::{Connection, Result};
 
